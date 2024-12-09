@@ -17,6 +17,7 @@ export class AppComponent {
   public geoMarkers: string = "";
   public geoDirection: string = "";
   public sliderZoom: number = 18;
+  public listOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
   inputSlider = new FormControl();
 
@@ -34,21 +35,51 @@ export class AppComponent {
     }
   }
 
-  private async getDirection(): Promise<any> {
+  // private getDirection(): void {
+  //   if (this.geolocation != undefined) {
+  //     const directions = this.geolocationService.getGeocode(this.geolocation.lat, this.geolocation.lng);
+  //     console.log("directions", directions);
+  //     // const directions: Geocode = this.geolocationService
+  //     //   .getGeocode(this.geolocation.lat, this.geolocation.lng);
+  //     // this.geoDirection = directions.results[0].formatted_address;
+  //     // this.getMarkers(directions);
+  //   }
+  // }
+
+  // private async getDirection(): Promise<any> {
+  //   if (this.geolocation != undefined) {
+  //     const directions: Geocode = await this.geolocationService
+  //       .getGeocode(this.geolocation.lat, this.geolocation.lng)
+  //       .toPromise();
+  //     this.geoDirection = directions.results[0].formatted_address;
+  //     this.getMarkers(directions);
+  //   }
+  // }
+
+  private getDirection(): void {
     if (this.geolocation != undefined) {
-      const directions: Geocode = await this.geolocationService
-        .getGeocode(this.geolocation.lat, this.geolocation.lng)
-        .toPromise();
-      this.geoDirection = directions.results[0].formatted_address;
-      this.getMarkers(directions);
+      this.geolocationService.getGeocode(this.geolocation.lat, this.geolocation.lng).subscribe((directions) => {
+        // console.log("Subscribe", directions);
+        console.log("formatted_address", directions.results[0].formatted_address);
+        this.geoDirection = directions.results[0].formatted_address;
+        this.getMarkers(directions);
+      });
     }
   }
 
   private async getMarkers(directions: Geocode) {
     // console.log("GM", directions);
+    let contador: number = 0;
     this.geoMarkers = "";
     directions.results.forEach((d) => {
-      this.geoMarkers += "&markers=color:blue%7Csize:mid%7Clabel:A%7C"+d.geometry.location.lat+","+d.geometry.location.lng;
+      contador += 1;
+      this.geoMarkers +=
+        "&markers=color:blue%7Csize:mid%7Clabel:" +
+        contador +
+        "%7C" +
+        d.geometry.location.lat +
+        "," +
+        d.geometry.location.lng;
     });
   }
 }
